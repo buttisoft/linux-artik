@@ -27,10 +27,14 @@
 #include <linux/acpi.h>
 #include <linux/of.h>
 #include <asm/unaligned.h>
+#include <linux/gpio/consumer.h>
 
 struct goodix_ts_data {
 	struct i2c_client *client;
 	struct input_dev *input_dev;
+	
+	struct gpio_desc *reset_gpio;
+	
 	int abs_x_max;
 	int abs_y_max;
 	unsigned int max_touch_num;
@@ -385,6 +389,18 @@ static int goodix_ts_probe(struct i2c_client *client,
 
 	ts->client = client;
 	i2c_set_clientdata(client, ts);
+
+	ts->reset_gpio = devm_gpiod_get_optional(&client->dev, "reset", GPIOD_OUT_LOW);
+	// ts->reset_gpio = devm_gpiod_get(&client->dev, "reset", GPIOD_OUT_LOW);
+	if (IS_ERR(ts->reset_gpio)) {
+		error = PTR_ERR(ts->reset_gpio);
+
+		dev_err(&client->dev,
+				"Failed to request GPIO reset pin, error: %d\n",
+				error);
+	} else {
+		gpiod_set_value_cansleep(ts->reset_gpio, 1);
+	}
 
 	error = goodix_i2c_test(client);
 	if (error) {

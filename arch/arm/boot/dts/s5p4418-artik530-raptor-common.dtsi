@@ -342,6 +342,7 @@
 		compatible = "dongguan,gst7d0038";
 		backlight = <&backlight>;
 		status = "okay";
+		enable-gpios = <&gpio_b 14 0>;
 
 		port {
 			lvds_panel: endpoint {
@@ -388,6 +389,7 @@
 			connect-gpios = <&gpio_a 18 0>;
 			reset-gpios = <&gpio_a 22 0>;
 			initial-mode = <1>;
+			refclk-frequency = <24000000>;
 		};
 	};
 
@@ -661,28 +663,16 @@
 	#address-cells = <1>;
 	#size-cells = <0>;
 	status = "okay";
-
-	touchscreen@4a {
-		compatible = "atmel,maxtouch";
-		reg = <0x4a>;
+	
+	touchscreen@14 {
+		compatible = "goodix,gt911";
+		reg = <0x14>;
 		interrupt-parent = <&gpio_b>;
 		interrupts = <22 IRQ_TYPE_EDGE_FALLING>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&touchpanel_irq>;
-		skip-cfg-load;
-		switch-xy;
-	};
-
-	touchscreen@20 {
-		compatible = "zinitix,zinitix_touch";
-		reg = <0x20>;
-		interrupt-parent = <&gpio_b>;
-		interrupts = <8 IRQ_TYPE_EDGE_FALLING>;
-		reset-gpio = <&gpio_c 25 1>;
-		int-gpio = <&gpio_b 8 0>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&tsp_irq &tsp_reset>;
-	};
+		reset-gpios = <&gpio_c 25 0>;
+	};	
 };
 
 &dp_drm {
