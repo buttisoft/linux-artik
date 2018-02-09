@@ -12,7 +12,8 @@ Required properties:
  - reg			: I2C address of the chip. Should be 0x5d or 0x14
  - interrupt-parent	: Interrupt controller to which the chip is connected
  - interrupts		: Interrupt to which the chip is connected
-
+ - reset-gpios      : To drive reset signal
+ 
 Example:
 
 	i2c@00000000 {
@@ -23,6 +24,7 @@ Example:
 			reg = <0x5d>;
 			interrupt-parent = <&gpio>;
 			interrupts = <0 0>;
+			reset-gpios = <&gpio_c 25 0>;
 		};
 
 		/* ... */
