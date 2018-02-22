@@ -246,7 +246,7 @@ static int cw_init(struct cw_battery *cw_bat)
 	if (ret < 0)
 		return ret;
 
-	dev_err(cw_bat->dev, "ret=%d version(%x)\n", ret, reg_val);
+	dev_info(cw_bat->dev, "Version: ret=%d version(%x)\n", ret, reg_val);
 
 	ret = cw_read(cw_bat->client, REG_CONFIG, &reg_val);
 	if (ret < 0)
@@ -265,10 +265,10 @@ static int cw_init(struct cw_battery *cw_bat)
 	if (ret < 0)
 		return ret;
 
-	dev_err(cw_bat->dev, "rkbat config %x\n", reg_val);
+	dev_info(cw_bat->dev, "rkbat config %x\n", reg_val);
 	if (!(reg_val & CONFIG_UPDATE_FLG)) {
-		dev_err(cw_bat->dev,
-			"update flag for new battery info have not set\n");
+		dev_info(cw_bat->dev,
+			"Update flag for new battery info have not set\n");
 		ret = cw_update_config_info(cw_bat);
 		if (ret < 0)
 			return ret;

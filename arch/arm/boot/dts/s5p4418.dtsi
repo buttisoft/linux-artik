@@ -302,6 +302,10 @@
 					<NX_TIEOFF_UART4_SMCRXENB 0> ;
 			pinctrl-names = "default";
 			pinctrl-0 = <&serial4_pin>;
+			
+			rs485tx-gpios = <&gpio_a 0 0>;
+			rs485rx-gpios = <&gpio_a 25 0>;
+						
 			status = "disabled";
 		};
 

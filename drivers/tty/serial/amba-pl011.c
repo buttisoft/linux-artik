@@ -1185,6 +1185,16 @@ static void pl011_stop_tx(struct uart_port *port)
 	struct uart_amba_port *uap =
 	    container_of(port, struct uart_amba_port, port);
 
+	if ((uap->rs485tx_gpio) || (uap->rs485rx_gpio))
+		while (readl(port->membase + UART01x_FR) & UART01x_FR_BUSY)
+			mdelay(1);
+
+	if (uap->rs485tx_gpio)
+		gpiod_set_value_cansleep(uap->rs485tx_gpio, 0);
+
+	if (uap->rs485rx_gpio)
+		gpiod_set_value_cansleep(uap->rs485rx_gpio, 0);
+
 	uap->im &= ~UART011_TXIM;
 	writew(uap->im, uap->port.membase + UART011_IMSC);
 	pl011_dma_tx_stop(uap);
@@ -1207,6 +1217,7 @@ static void pl011_start_tx(struct uart_port *port)
 
 	if (uap->rs485tx_gpio)
 		gpiod_set_value_cansleep(uap->rs485tx_gpio, 1);
+
 	if (uap->rs485rx_gpio)
 		gpiod_set_value_cansleep(uap->rs485rx_gpio, 1);
 		
@@ -1218,11 +1229,6 @@ static void pl011_stop_rx(struct uart_port *port)
 {
 	struct uart_amba_port *uap =
 	    container_of(port, struct uart_amba_port, port);
-
-	if (uap->rs485tx_gpio)
-		gpiod_set_value_cansleep(uap->rs485tx_gpio, 0);
-	if (uap->rs485rx_gpio)
-		gpiod_set_value_cansleep(uap->rs485rx_gpio, 0);
 
 	uap->im &= ~(UART011_RXIM|UART011_RTIM|UART011_FEIM|
 		     UART011_PEIM|UART011_BEIM|UART011_OEIM);
@@ -2405,7 +2411,7 @@ static int pl011_probe(struct amba_device *dev, const struct amba_id *id)
 				"Failed to request GPIO for rs485tx pin, error: %d\n",
 				error);
 	}
-
+	
 	uap->rs485rx_gpio = devm_gpiod_get_optional(&dev->dev, "rs485rx", GPIOD_OUT_LOW);
 	if (IS_ERR(uap->rs485rx_gpio)) {
 		error = PTR_ERR(uap->rs485rx_gpio);

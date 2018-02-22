@@ -313,10 +313,10 @@ static int goodix_i2c_test(struct i2c_client *client)
 		if (!error)
 			return 0;
 
-		dev_err(&client->dev, "i2c test failed attempt %d: %d\n",
-			retry, error);
 		msleep(20);
 	}
+
+	dev_err(&client->dev, "i2c test failed attempt after 3 retry: %d\n", error);
 
 	return error;
 }
