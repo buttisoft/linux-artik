@@ -387,7 +387,7 @@
 			connect-gpios = <&gpio_a 18 0>;
 			reset-gpios = <&gpio_a 22 0>;
 			initial-mode = <1>;
-			refclk-frequency = <24000000>;
+			refclk-frequency = <26000000>;
 		};
 	};
 
