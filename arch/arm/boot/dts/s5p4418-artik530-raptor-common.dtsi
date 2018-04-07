@@ -619,6 +619,7 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&touchpanel_irq>;
 		reset-gpios = <&gpio_c 25 0>;
+		irq-gpios = <&gpio_b 22 0>;
 	};	
 };
 
